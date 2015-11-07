@@ -2,7 +2,12 @@
 	require 'vendor/autoload.php';
 	include 'connection.php';
 
+
 	$app = new \Slim\Slim();
+
+    $response = $app->response();
+    $response->header('Access-Control-Allow-Origin', '*');
+    //$response->header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
  
     $app->get('/', function() {
         echo "Welcome to Promo<i>Pass</i>'s BACK END. :)";
@@ -32,6 +37,7 @@
                $app->get('/', 'getProviders');
                $app->get('/id/:ProviderID', 'getProvider');
                //$app->get('consumer/id/:ConsumerID/receivedAds/id', 'getReceivedAds');
+               
                $app->post('/provider', 'addProvider');
            });
 
@@ -57,6 +63,7 @@
         });
         
     });
+
 
 	$app->run();
     
