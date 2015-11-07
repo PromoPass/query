@@ -193,7 +193,9 @@
 	   }	   
 
 	   
-	function clearReceivedAd($ReceivedAdID) {
+	   
+	   
+	function clearReceivedAd($ReceivedAdID) {	//check this
 			$sql = "UPDATE ReceivedAd
 					SET IsCleared = 1
 					WHERE ReceivedAdID = ?";
@@ -225,8 +227,72 @@
 		   $tableName = "Writing";
 		   dbGetRecords($tableName, $sql, [$AdID]);
 	   }	   	   
-		   
-		   
+
+	function getProviderID($Email) {
+		   $sql = "SELECT ProviderID
+				   FROM Provider
+				   WHERE Email = ?";
+		   $tableName = "Provider";
+		   dbGetRecords($tableName, $sql, [$Email]);
+	   }
+
+	function getBusinessIDfromProviderID($ProviderID) {
+		   $sql = "SELECT BusinessID
+				   FROM Business
+				   WHERE ProviderID = ?";
+		   $tableName = "Business";
+		   dbGetRecords($tableName, $sql, [$ProviderID]);
+	   }	   
+
+	function setAdNotCurrent($BusinessID) { //see if works for update
+		   $sql = "UPDATE Ad 
+				   SET IsCurrent = 0
+				   WHERE BusinessID = ?
+				   AND IsCurrent = 1";
+		   $tableName = "Ad";
+		   dbAddRecords($sql, [$BusinessID]);	
+	   }	   
+	
+	function addProviderEmail(){
+	    $app = Slim::getInstance();
+        $request = $app->request();
+        $provider = json_decode($request->getBody());
+        $sql = "INSERT INTO Provider (Email)
+                VALUES (?)";
+        dbAddRecords($sql, [ $provider->Email ]); 
+	}
+	
+	function addBusinessInfo(){
+	    $app = Slim::getInstance();
+        $request = $app->request();
+        $provider = json_decode($request->getBody());
+        $sql = "INSERT INTO Business (Name, ProviderID, GimbalID)
+                VALUES (?, ?, ?)";
+        dbAddRecords($sql, [ $provider->Name,
+                             $provider->ProviderID,
+                             $provider->GimbalID ]); 
+    }	
+	
+   function addAdTitle() {
+        $app = Slim::getInstance();
+        $request = $app->request();
+        $provider = json_decode($request->getBody());
+        $sql = "INSERT INTO Ad (BusinessID, Title)
+                VALUES (?, ?)";
+        dbAddRecords($sql, [ $provider->BusinessID,
+                             $provider->Title ]); 
+    }	
+	
+   function addAdWriting() {
+        $app = Slim::getInstance();
+        $request = $app->request();
+        $provider = json_decode($request->getBody());
+        $sql = "INSERT INTO Writing (AdID, Writing)
+                VALUES (?, ?)";
+        dbAddRecords($sql, [ $provider->AdID,
+                             $provider->Writing ]); 
+    }	
+	
    function dbGetRecords($tableName, $sql, $a_bind_params = []){
        global $db;
        $query = $db->prepare($sql);
