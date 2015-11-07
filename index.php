@@ -2,6 +2,8 @@
 	require 'vendor/autoload.php';
 	include 'connection.php';
 
+    require 'routes/provider.php';
+    require 'routes/usercache.php';
 
 	$app = new \Slim\Slim();
 
@@ -39,6 +41,12 @@
                
                $app->post('/', 'addProvider');
            });
+            
+           // User Cache group
+            $app->group('/usercache', function() use($app) {
+                $app->post('/', 'addUserCache');
+                $app->delete('/:id', 'deleteUserCache');
+            });
 
            // Consumer group
            $app->group('/consumer', function() use($app) {
@@ -65,35 +73,6 @@
 
 
 	$app->run();
-    
-   function getProviders() {
-       $sql = "SELECT ProviderID, FirstName, LastName, Email
-               FROM Provider";
-       $tableName = "Providers";
-       dbGetRecords($tableName, $sql);    
-   }
-
-   function getProvider($ProviderID) {
-       $sql = "SELECT ProviderID, FirstName, LastName, Email
-               From Provider
-               WHERE ProviderID = ?";
-       $tableName = "Provider";
-       dbGetRecords($tableName, $sql, [$ProviderID]);
-   }
-
-   function addProvider() {
-        $app = \Slim\Slim::getInstance();
-        $request = $app->request();
-       
-        $provider = json_decode($request->getBody());
-        $sql = "INSERT INTO Provider (ProviderID, FirstName, LastName, Email)
-                VALUES (?, ?, ?, ?)";
-        dbAddRecords($sql, [ $provider->user_id,
-                             $provider->first_name,
-                             $provider->last_name,
-                             $provider->email ]); 
-    }
-
 
    function getConsumerIDByDevice($DeviceID) {
        $sql = "SELECT ConsumerID
@@ -173,14 +152,14 @@
 		   $tableName = "Ad";
 		   dbGetRecords($tableName, $sql, [$BusinessID]);
 	   }
-	   
+	/*   
 	function insertReceivedAd($AdID,$ConsumerID,$BusinessID) { //check this
 		   $sql = "INSERT INTO ReceivedAd (AdID, ConsumerID, BusinessID)
 				   VALUES (?, ?, ?)";
 		   $tableName = "ReceivedAd";
 		   dbGetRecords($tableName, $sql, [$AdID,$ConsumerID,$BusinessID]);
 	   }	
-	   
+	 */  
 	function getReceivedAdsNotClearedOrSaved($ConsumerID) {
 		   $sql = "SELECT ReceivedAdID, AdID, BusinessID, ReceivedDate
 				   FROM ReceivedAd
@@ -191,8 +170,7 @@
 		   dbGetRecords($tableName, $sql, [$ConsumerID]);
 	   }	   
 
-	   
-	function clearReceivedAd($ReceivedAdID) {
+	function clearReceivedAd($ReceivedAdID) {	//check this
 			$sql = "UPDATE ReceivedAd
 					SET IsCleared = 1
 					WHERE ReceivedAdID = ?";
@@ -224,8 +202,72 @@
 		   $tableName = "Writing";
 		   dbGetRecords($tableName, $sql, [$AdID]);
 	   }	   	   
-		   
-		   
+
+	function getProviderID($Email) {
+		   $sql = "SELECT ProviderID
+				   FROM Provider
+				   WHERE Email = ?";
+		   $tableName = "Provider";
+		   dbGetRecords($tableName, $sql, [$Email]);
+	   }
+
+	function getBusinessIDfromProviderID($ProviderID) {
+		   $sql = "SELECT BusinessID
+				   FROM Business
+				   WHERE ProviderID = ?";
+		   $tableName = "Business";
+		   dbGetRecords($tableName, $sql, [$ProviderID]);
+	   }	   
+/*
+	function setAdNotCurrent($BusinessID) { //see if works for update
+		   $sql = "UPDATE Ad 
+				   SET IsCurrent = 0
+				   WHERE BusinessID = ?
+				   AND IsCurrent = 1";
+		   $tableName = "Ad";
+		   dbAddRecords($sql, [$BusinessID]);	
+	   }	   
+	
+	function addProviderEmail(){
+	    $app = Slim::getInstance();
+        $request = $app->request();
+        $provider = json_decode($request->getBody());
+        $sql = "INSERT INTO Provider (Email)
+                VALUES (?)";
+        dbAddRecords($sql, [ $provider->Email ]); 
+	}
+	
+	function addBusinessInfo(){
+	    $app = Slim::getInstance();
+        $request = $app->request();
+        $provider = json_decode($request->getBody());
+        $sql = "INSERT INTO Business (Name, ProviderID, GimbalID)
+                VALUES (?, ?, ?)";
+        dbAddRecords($sql, [ $provider->Name,
+                             $provider->ProviderID,
+                             $provider->GimbalID ]); 
+    }	
+    
+   function addAdTitle() {
+        $app = Slim::getInstance();
+        $request = $app->request();
+        $provider = json_decode($request->getBody());
+        $sql = "INSERT INTO Ad (BusinessID, Title)
+                VALUES (?, ?)";
+        dbAddRecords($sql, [ $provider->BusinessID,
+                             $provider->Title ]); 
+    }	
+	
+   function addAdWriting() {
+        $app = Slim::getInstance();
+        $request = $app->request();
+        $provider = json_decode($request->getBody());
+        $sql = "INSERT INTO Writing (AdID, Writing)
+                VALUES (?, ?)";
+        dbAddRecords($sql, [ $provider->AdID,
+                             $provider->Writing ]); 
+    }	
+*/	
    function dbGetRecords($tableName, $sql, $a_bind_params = []){
        global $db;
        $query = $db->prepare($sql);
@@ -238,9 +280,17 @@
        echo '{ "' . $tableName . '": ' . json_encode($results, JSON_PRETTY_PRINT) . ' }';
    }
 
-   function dbAddRecords($sql, $a_bind_params = []) {
+   function dbAddRecords($sql, $a_bind_params = [], $object) {
        global $db;
        $query = $db->prepare($sql);
        $query->execute($a_bind_params);
-       echo json_encode($db->lastInsertId());
+       echo $object;
+   }
+
+   function dbDeleteRecords($sql, $a_bind_params = []) {
+       global $db;
+       $query = $db->prepare($sql);
+       $query->execute($a_bind_params);
+       $app = \Slim\Slim::getInstance();
+       $app->response()->status(204);
    }
