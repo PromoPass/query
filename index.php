@@ -6,7 +6,6 @@
 	$app = new \Slim\Slim();
 
     $response = $app->response();
-    $response->header('Access-Control-Allow-Origin', '*');
     //$response->header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
  
     $app->get('/', function() {
@@ -38,7 +37,7 @@
                $app->get('/id/:ProviderID', 'getProvider');
                //$app->get('consumer/id/:ConsumerID/receivedAds/id', 'getReceivedAds');
                
-               $app->post('/provider', 'addProvider');
+               $app->post('/', 'addProvider');
            });
 
            // Consumer group
@@ -83,16 +82,16 @@
    }
 
    function addProvider() {
-        $app = Slim::getInstance();
+        $app = \Slim\Slim::getInstance();
         $request = $app->request();
+       
         $provider = json_decode($request->getBody());
         $sql = "INSERT INTO Provider (ProviderID, FirstName, LastName, Email)
                 VALUES (?, ?, ?, ?)";
-        dbAddRecords($sql, [ $provider->ProviderID,
-                             $provider->FirstName,
-                             $provider->LastName,
-                             $provider->Email ]); 
-       
+        dbAddRecords($sql, [ $provider->user_id,
+                             $provider->first_name,
+                             $provider->last_name,
+                             $provider->email ]); 
     }
 
 
@@ -236,8 +235,8 @@
            $query->execute();
        }
        $results = $query->fetchAll(PDO::FETCH_OBJ);
-       echo '{ ' . '"$tableName": ' . json_encode($results, JSON_PRETTY_PRINT) . ' }';
-  }
+       echo '{ "' . $tableName . '": ' . json_encode($results, JSON_PRETTY_PRINT) . ' }';
+   }
 
    function dbAddRecords($sql, $a_bind_params = []) {
        global $db;
