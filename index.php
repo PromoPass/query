@@ -70,7 +70,7 @@
    function getProviders() {
        $sql = "SELECT ProviderID, FirstName, LastName, Email
                FROM Provider";
-       $tableName = "Provider";
+       $tableName = "Providers";
        dbGetRecords($tableName, $sql);    
    }
 
@@ -138,9 +138,17 @@
        $sql = "SELECT Type
                FROM BusinessType
                WHERE BusinessID = ?";
-       $tableName = "BusinessTypes";
+       $tableName = "BusinessType";
        dbGetRecords($tableName, $sql, [$BusinessID]);
    }
+   
+   	function getBusinessID($GimbalID) {
+		   $sql = "SELECT BusinessID
+				   FROM Business
+				   WHERE GimbalID = ?";
+		   $tableName = "Business";
+		   dbGetRecords($tableName, $sql, [$GimbalID]);
+	   }
 /*
    function getReceivedAds($ConsumderID) {
        $sql = "SELECT BusinessID
@@ -157,7 +165,68 @@
        $tableName = "Ad";
        dbGetRecords($tableName, $sql);
    }
+   
+   	function getCurrentAd($BusinessID) {
+		   $sql = "SELECT AdID
+				   FROM Ad
+				   WHERE BusinessID = ?
+				   and IsCurrent = 1";
+		   $tableName = "Ad";
+		   dbGetRecords($tableName, $sql, [$BusinessID]);
+	   }
+	   
+	function insertReceivedAd($AdID,$ConsumerID,$BusinessID) { //check this
+		   $sql = "INSERT INTO ReceivedAd (AdID, ConsumerID, BusinessID)
+				   VALUES (?, ?, ?)";
+		   $tableName = "ReceivedAd";
+		   dbGetRecords($tableName, $sql, [$AdID,$ConsumerID,$BusinessID]);
+	   }	
+	   
+	function getReceivedAdsNotClearedOrSaved($ConsumerID) {
+		   $sql = "SELECT ReceivedAdID, AdID, BusinessID, ReceivedDate
+				   FROM ReceivedAd
+				   WHERE ConsumerID = ?
+				   AND IsCleared = 0
+				   AND IsSaved = 0";
+		   $tableName = "ReceivedAd";
+		   dbGetRecords($tableName, $sql, [$ConsumerID]);
+	   }	   
 
+	   
+	function clearReceivedAd($ReceivedAdID) {
+			$sql = "UPDATE ReceivedAd
+					SET IsCleared = 1
+					WHERE ReceivedAdID = ?";
+		   $tableName = "ReceivedAd";
+		   dbGetRecords($tableName, $sql, [$ReceivedAdID]);
+	   }
+	   
+	function getAdInformation($ReceivedAdID) {
+		   $sql = "SELECT AdID, BusinessID 
+				   FROM ReceivedAd
+				   WHERE ReceivedAdID = ?";
+		   $tableName = "ReceivedAd";
+		   dbGetRecords($tableName, $sql, [$ReceivedAdID]);
+	   }	
+
+	function getAdTitle($AdID) {
+		   $sql = "SELECT Title
+				   FROM Ad
+				   WHERE AdID = ?";
+		   $tableName = "Ad";
+		   dbGetRecords($tableName, $sql, [$AdID]);
+	   }	   
+	   
+	   
+	function getAdWriting($AdID) {
+		   $sql = "SELECT Writing
+				   FROM Writing
+				   WHERE AdID = ?";
+		   $tableName = "Writing";
+		   dbGetRecords($tableName, $sql, [$AdID]);
+	   }	   	   
+		   
+		   
    function dbGetRecords($tableName, $sql, $a_bind_params = []){
        global $db;
        $query = $db->prepare($sql);
@@ -167,8 +236,8 @@
            $query->execute();
        }
        $results = $query->fetchAll(PDO::FETCH_OBJ);
-       echo '{"' . $tableName . '": ' . json_encode($results, JSON_PRETTY_PRINT) . '}'; 
-   }
+       echo '{ ' . '"$tableName": ' . json_encode($results, JSON_PRETTY_PRINT) . ' }';
+  }
 
    function dbAddRecords($sql, $a_bind_params = []) {
        global $db;
