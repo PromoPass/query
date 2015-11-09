@@ -1,34 +1,4 @@
 <?php
-    function addBusiness() {
-        $app = \Slim\Slim::getInstance();
-        $request = $app->request();
-        $business = json_decode($request->getBody(), true);
-        $sql = "INSERT INTO Business (Name, ProviderID, GimbalID)
-                VALUES (?, ?, ?);";
-        $bindValues = [
-            $business['name'],
-            $business['provider_id'],
-            $business['gimbal_id'] ];
-            
-        foreach($business['typeList'] as $type) {
-           $sql .= "INSERT INTO BusinessType (BusinessID, Type)
-                   VALUES (
-                   (SELECT BusinessID
-                    FROM Business
-                    WHERE ProviderID=?
-                    AND Name=? ),
-                   ?
-	               );";
-           array_push($bindValues, $business['provider_id'],
-                                     $business['name'],
-                                     $type['value']);
-        }
-        echo dbAddRecords($sql, $bindValues, $business); 
-       
-        
-       
-    }
-
     function getBusinesses() {
        $sql = "SELECT BusinessID, Name, ProviderID, EIN, GimbalID
                FROM Business";
@@ -48,7 +18,7 @@
                FROM Business
                WHERE BusinessID = ?";
        $tableName = "Business";
-       dbGetRecords($tableName, $sql, [$BusinessID]);
+       echo dbGetRecords($tableName, $sql, [$BusinessID]);
    }
 
    function getBusinessName($BusinessID) {
@@ -74,3 +44,29 @@
 		   $tableName = "Business";
 		echo dbGetRecords($tableName, $sql, [$GimbalID]);
 	   }
+	   
+    function addBusiness() {
+        $app = \Slim\Slim::getInstance();
+        $request = $app->request();
+        $business = json_decode($request->getBody(), true);
+        $sql = "INSERT INTO Business (Name, ProviderID, GimbalID)
+                VALUES (?, ?, ?);";
+        $bindValues = [
+            $business['name'],
+            $business['provider_id'],
+            $business['gimbal_id'] ];
+        foreach($business['typeList'] as $type) {
+           $sql .= "INSERT INTO BusinessType (BusinessID, Type)
+                   VALUES (
+                   (SELECT BusinessID
+                    FROM Business
+                    WHERE ProviderID=?
+                    AND Name=? ),
+                   ?
+	               );";
+           array_push($bindValues, $business['provider_id'],
+                                     $business['name'],
+                                     $type['value']);
+        }
+        echo dbAddRecords($sql, $bindValues, $business); 
+    }

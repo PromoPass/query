@@ -31,7 +31,7 @@
            // Provider group
            $app->group('/provider', function() use($app) {
                $app->get('/', 'getProviders');
-               $app->get('/id/:ProviderID', 'getProvider');
+               $app->get('/:ProviderID', 'getProvider');
                
                $app->post('/', 'addProvider');
                // TODO $app->put('/', 'updateProvider'); 
