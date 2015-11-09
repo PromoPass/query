@@ -3,7 +3,7 @@
        $sql = "SELECT ProviderID, FirstName, LastName, Email
                FROM Provider";
        $tableName = "Providers";
-       dbGetRecords($tableName, $sql);    
+       echo dbGetRecords($tableName, $sql);    
    }
 
    function getProvider($ProviderID) {
@@ -11,7 +11,7 @@
                From Provider
                WHERE ProviderID = ?";
        $tableName = "Provider";
-       dbGetRecords($tableName, $sql, [$ProviderID]);
+       echo dbGetRecords($tableName, $sql, [$ProviderID]);
    }
 
    function addProvider() {
@@ -20,14 +20,16 @@
        
         $provider = json_decode($request->getBody());
         $sql = "INSERT INTO Provider (ProviderID, FirstName, LastName, Email)
-                VALUES (?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE FirstName = ?, LastName = ?, Email = ?";
-        dbAddRecords($sql, [ $provider->user_id,
-                             $provider->first_name,
-                             $provider->last_name,
-                             $provider->email,
+                VALUES (?, ?, ?, ?)";
+        echo dbAddRecords($sql, [ $provider->user_id,
                              $provider->first_name,
                              $provider->last_name,
                              $provider->email ],
-                     $request->getBody()); 
+                     $provider); 
     }
+   function updateProvider() {
+      //todo! 
+        $sql = "INSERT INTO Provider (ProviderID, FirstName, LastName, Email)
+                VALUES (?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE FirstName = ?, LastName = ?, Email = ?";
+   }
