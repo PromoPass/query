@@ -12,8 +12,7 @@
 	$app = new \Slim\Slim();
 
     $response = $app->response();
-    //$response->header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
- 
+
     $app->get('/', function() {
         echo "Welcome to Promo<i>Pass</i>'s BACK END. :)";
     });
@@ -32,6 +31,7 @@
            $app->group('/provider', function() use($app) {
                $app->get('/', 'getProviders');
                $app->get('/:ProviderID', 'getProvider');
+               $app->get('/:ProviderID/business', 'getProviderBusinesses');
                
                $app->post('/', 'addProvider');
                // TODO $app->put('/', 'updateProvider'); 
@@ -40,11 +40,15 @@
            // User Cache group
             $app->group('/usercache', function() use($app) {
                 $app->post('/', 'addUserCache');
+                
                 $app->delete('/:id', 'deleteUserCache');
             });
 
            // Consumer group
            $app->group('/consumer', function() use($app) {
+
+           $app->get('/:ConsumerID/received', 'getReceivedAdsNotClearedOrSaved');
+           $app->post('/', 'addConsumer');
            });
             
            // Device group
@@ -57,6 +61,7 @@
                $app->get('/', 'getBusinesses');
                $app->get('/all/names', 'getBusinessNames');
                $app->get('/:BusinessID', 'getBusiness');
+               $app->get('/:BusinessID/current-ad/id', 'getCurrentAdID');
                $app->get('/:BusinessID/name', 'getBusinessName');
                $app->get('/:BusinessID/types', 'getBusinessTypes');
                $app->post('/', 'addBusiness');
@@ -67,12 +72,14 @@
                $app->get('/:GimbalID/business/business-id', 'getBusinessID');
            });
           
+           // Ad group
            $app->group('/ad', function() use($app) {
                $app->get('/', 'getAds');
+               $app->get('/:AdID', 'getAd');
+               $app->get('/:ReceivedAdID/clear', 'clearReceivedAd');
+	                      
+               $app->post('/', 'addAd');
            });
-            
-           
-            
         });
         
     });
@@ -145,6 +152,17 @@
        }
        $results = $query->fetchAll(PDO::FETCH_OBJ);
        return '{ "' . $tableName . '": ' . json_encode($results, JSON_PRETTY_PRINT) . ' }';
+   }
+
+   function dbUpdateRecords($tableName, $sql, $a_bind_params = []){
+       global $db;
+       $query = $db->prepare($sql);
+       if(!empty($a_bind_params)) {
+           $query->execute($a_bind_params);
+       } else {
+           $query->execute();
+       }
+       return '{ "' . $tableName . '" }';
    }
 
    function dbAddRecords($sql, $a_bind_params = [], $object) {

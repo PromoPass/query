@@ -13,6 +13,14 @@
        $tableName = "Provider";
        echo dbGetRecords($tableName, $sql, [$ProviderID]);
    }
+   
+   function getProviderBusinesses($ProviderID) {
+       $sql = "SELECT BusinessID, Name, ProviderID, EIN, GimbalID
+               FROM Business
+               WHERE ProviderID = ?";
+       $tableName = "Business";
+       echo dbGetRecords($tableName, $sql, [$ProviderID]);
+   }
 
    function addProvider() {
         $app = \Slim\Slim::getInstance();
@@ -33,3 +41,4 @@
                 VALUES (?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE FirstName = ?, LastName = ?, Email = ?";
    }
+   

@@ -1,62 +1,55 @@
 <?php
    function getAds() {
-       $sql = "SELECT AdID, TemplateID, IsCurrent, Title, BusinessID, CreateDate
+       $sql = "SELECT AdID, TemplateID, IsCurrent, Title, Writing, BusinessID, CreateDate, PicURL
                FROM Ad";
        $tableName = "Ad";
        echo dbGetRecords($tableName, $sql);
    }
+   function getAd($AdID){
+       $sql = "SELECT AdID, TemplateID, IsCurrent, Title, Writing, BusinessID, CreateDate, PicURL 
+		FROM Ad
+		WHERE AdID = ?";
+	$tableName = "Ad";
+	echo dbGetRecords($tableName, $sql, [$AdID]);
+ }
    
-   	function getCurrentAd($BusinessID) {
+   	function getCurrentAdID($BusinessID) {
 		   $sql = "SELECT AdID
 				   FROM Ad
 				   WHERE BusinessID = ?
 				   and IsCurrent = 1";
 		   $tableName = "Ad";
-		   dbGetRecords($tableName, $sql, [$BusinessID]);
+		   echo dbGetRecords($tableName, $sql, [$BusinessID]);
 	   }
 
 
-	function getReceivedAdsNotClearedOrSaved($ConsumerID) {
-		   $sql = "SELECT ReceivedAdID, AdID, BusinessID, ReceivedDate
-				   FROM ReceivedAd
-				   WHERE ConsumerID = ?
-				   AND IsCleared = 0
-				   AND IsSaved = 0";
-		   $tableName = "ReceivedAd";
-		   dbGetRecords($tableName, $sql, [$ConsumerID]);
-	   }	   
+
 
 	function clearReceivedAd($ReceivedAdID) {	//check this
-			$sql = "UPDATE ReceivedAd
-					SET IsCleared = 1
-					WHERE ReceivedAdID = ?";
-		   $tableName = "ReceivedAd";
-		   dbGetRecords($tableName, $sql, [$ReceivedAdID]);
+
+		$sql = "UPDATE ReceivedAd
+			SET IsCleared = 1
+			WHERE ReceivedAdID = ?";
+
+		   $tableName = "Ad";
+		   dbUpdateRecords($tableName, $sql, [$ReceivedAdID]);
 	   }
 	   
-	function getAdInformation($ReceivedAdID) {
-		   $sql = "SELECT AdID, BusinessID 
-				   FROM ReceivedAd
-				   WHERE ReceivedAdID = ?";
-		   $tableName = "ReceivedAd";
-		   dbGetRecords($tableName, $sql, [$ReceivedAdID]);
-	   }	
-
-	function getAdTitle($AdID) {
-		   $sql = "SELECT Title
+	function getAdInformation($AdID) {
+		   $sql = "SELECT Title, Writing
 				   FROM Ad
 				   WHERE AdID = ?";
 		   $tableName = "Ad";
 		   dbGetRecords($tableName, $sql, [$AdID]);
 	   }	   
-	   
+	   /* needs to be deprecated ... can be added into Ad 
 	function getAdWriting($AdID) {
 		   $sql = "SELECT Writing
 				   FROM Writing
 				   WHERE AdID = ?";
 		   $tableName = "Writing";
 		   dbGetRecords($tableName, $sql, [$AdID]);
-	   }	   	   
+	   }	   	   */
 
     function setAdNotCurrent($BusinessID) { //see if works for update
 		   $sql = "UPDATE Ad 
@@ -67,16 +60,6 @@
 		   dbAddRecords($sql, [$BusinessID]);	
 	   }	
    
-    function getReceivedAds($ConsumderID) {
-       $sql = "SELECT BusinessID
-               FROM ReceivedAd
-               WHERE ConsumerID = ? 
-                   AND IsCleared = 0
-                   AND IsSaved = 0
-               Group by BusinessID";
-           dbGetRecords($sql, [$ConsumerID]);
-       }
-
 
 	function insertReceivedAd($AdID,$ConsumerID,$BusinessID) { //check this
 		   $sql = "INSERT INTO ReceivedAd (AdID, ConsumerID, BusinessID)
@@ -84,3 +67,23 @@
 		   $tableName = "ReceivedAd";
 		   dbGetRecords($tableName, $sql, [$AdID,$ConsumerID,$BusinessID]);
 	   }	
+	   
+   function addAd() {
+   $app = \Slim\Slim::getInstance();
+   $request = $app->request();
+   
+   $ad = json_decode($request->getBody());
+   // todo: set previous iscurrent ad as not current;
+
+   // finally do the insert
+    $sql .=      "INSERT INTO Ad (TemplateID, IsCurrent, Title, Writing, BusinessID, CreateDate)
+           VALUES (?, ?, ?, ?, ?, NOW())";
+    echo dbAddRecords($sql, [ $ad->BusinessID,
+                              $ad->TemplateID,
+                              1,
+                              $ad->Title,
+                              $ad->Writing,
+                              $ad->BusinessID ],
+                              $ad   );
+   }
+   /*    .*/

@@ -54,7 +54,7 @@
         $bindValues = [
             $business['name'],
             $business['provider_id'],
-            $business['gimbal_id'] ];
+            $business['gimbal_id' ] ];
         foreach($business['typeList'] as $type) {
            $sql .= "INSERT INTO BusinessType (BusinessID, Type)
                    VALUES (
