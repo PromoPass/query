@@ -74,7 +74,9 @@
    
    $ad = json_decode($request->getBody());
    // todo: set previous iscurrent ad as not current;
-
+    $sql = "UPDATE Ad
+            SET IsCurrent = 0
+            WHERE BusinessID = ?;";
    // finally do the insert
     $sql .=      "INSERT INTO Ad (TemplateID, IsCurrent, Title, Writing, BusinessID, CreateDate)
            VALUES (?, ?, ?, ?, ?, NOW())";
