@@ -15,9 +15,17 @@
 			$receivedAd->BusinessID  
 		],
             	$receivedAd);
-        }
+    }
 
-	function clearReceivedAd($ReceivedAdID) {       //check this
+    function favoriteReceivedAd($ReceivedAdID) {
+        $sql = "UPDATE ReceivedAd
+                SET IsSaved = 1
+                WHERE ReceivedAdID = ?";
+        $tableName = "ReceivedAd";
+        echo dbUpdateRecords($tableName, $sql, [$ReceivedAdID]);      
+    }
+
+	function clearReceivedAd($ReceivedAdID) {       // this works
 
                 $sql = "UPDATE ReceivedAd
                 SET IsCleared = 1
