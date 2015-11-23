@@ -1,6 +1,6 @@
 <?php
    function getProviderBusinessesbySessionToken($SessionToken) {
-      $sql = "SELECT BusinessID, Name, Business.ProviderID, EIN, GimbalID
+      $sql = "SELECT Business.BusinessID, Business.Name, Business.ProviderID, Business.EIN, Business.GimbalID
             FROM Business
             INNER JOIN Provider ON Provider.ProviderID = Business.ProviderID
             WHERE Provider.ProviderID = (SELECT user_id FROM UserCache WHERE session_token = ?)";

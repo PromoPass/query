@@ -70,3 +70,17 @@
                               $ad->BusinessID ],
                               $ad   );
    }
+
+  function editAd($AdID) {
+      $app = \Slim\Slim::getInstance();
+      $request = $app->request();
+      $ad = json_decode($request->getBody());
+      $sql = "UPDATE Ad
+              SET TemplateId = ?, Title = ?, Writing = ? 
+              WHERE AdID = ?";
+      echo dbAddRecords($sql, [ $ad->TemplateID,
+                                $ad->Title,
+                                $ad->Writing,
+                                $AdID ],
+                                $ad    );
+  } 

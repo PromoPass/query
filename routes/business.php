@@ -70,3 +70,5 @@
         }
         echo dbAddRecords($sql, $bindValues, $business); 
     }
+
+   

@@ -65,6 +65,7 @@
                $app->get('/:BusinessID/name', 'getBusinessName');
                $app->get('/:BusinessID/types', 'getBusinessTypes');
                $app->get('/:GimbalID/getBusinessID', 'getBusinessID');
+               
                $app->post('/', 'addBusiness');
            });
             
@@ -79,6 +80,8 @@
                $app->get('/:AdID', 'getAd');
 	                      
                $app->post('/', 'addAd');
+               
+               $app->put('/:AdID', 'editAd');
            });
 
            // Received Ad group
