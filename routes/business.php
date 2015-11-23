@@ -21,6 +21,14 @@
        echo dbGetRecords($tableName, $sql, [$BusinessID]);
    }
 
+   function getCurrentAd($BusinessID) {
+       $sql = "Select AdID, Title, Writing, BusinessID, CreateDate, TemplateID, PicURL
+               FROM Ad
+               WHERE BusinessID = ? AND IsCurrent = 1";
+       $tableName = "Ad";
+       echo dbGetRecords($tableName, $sql, [$BusinessID]);
+   }
+
    function getBusinessName($BusinessID) {
        $sql = "Select Name
                From Business

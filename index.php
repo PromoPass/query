@@ -61,6 +61,7 @@
                $app->get('/', 'getBusinesses');
                $app->get('/all/names', 'getBusinessNames');
                $app->get('/:BusinessID', 'getBusiness');
+               $app->get('/:BusinessID/current-ad', 'getCurrentAd');
                $app->get('/:BusinessID/current-ad/id', 'getCurrentAdID');
                $app->get('/:BusinessID/name', 'getBusinessName');
                $app->get('/:BusinessID/types', 'getBusinessTypes');
