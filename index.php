@@ -8,6 +8,7 @@
     require 'routes/businesstype.php';
     require 'routes/consumer.php';
     require 'routes/ad.php';
+    require 'routes/receivedad.php';
 
 	$app = new \Slim\Slim();
 
@@ -32,15 +33,14 @@
                $app->get('/', 'getProviders');
                $app->get('/:ProviderID', 'getProvider');
                $app->get('/:ProviderID/business', 'getProviderBusinesses');
-               
                $app->post('/', 'addProvider');
                // TODO $app->put('/', 'updateProvider'); 
            });
             
            // User Cache group
             $app->group('/usercache', function() use($app) {
+                $app->get('/:SessionToken/business', 'getProviderBusinessesbySessionToken');
                 $app->post('/', 'addUserCache');
-                
                 $app->delete('/:id', 'deleteUserCache');
             });
 
@@ -64,6 +64,7 @@
                $app->get('/:BusinessID/current-ad/id', 'getCurrentAdID');
                $app->get('/:BusinessID/name', 'getBusinessName');
                $app->get('/:BusinessID/types', 'getBusinessTypes');
+               $app->get('/:GimbalID/getBusinessID', 'getBusinessID');
                $app->post('/', 'addBusiness');
            });
             
@@ -76,9 +77,18 @@
            $app->group('/ad', function() use($app) {
                $app->get('/', 'getAds');
                $app->get('/:AdID', 'getAd');
-               $app->get('/:ReceivedAdID/clear', 'clearReceivedAd');
 	                      
                $app->post('/', 'addAd');
+           });
+
+           // Received Ad group
+           $app->group('/received/ad', function() use($app) {
+               $app->get('/:ReceivedAdID/clear', 'clearReceivedAd');
+               $app->get('/:ReceivedAdID/see', 'seeReceivedAd');
+		       $app->get('/:AdID/:ConsumerID/getReceivedAd', 'getReceivedAd');
+		       $app->get('/:ConsumerID/unseen', 'getUnseenReceivedAds');
+
+               $app->post('/', 'addReceivedAd');
            });
         });
         

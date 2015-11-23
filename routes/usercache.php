@@ -1,4 +1,13 @@
 <?php
+   function getProviderBusinessesbySessionToken($SessionToken) {
+      $sql = "SELECT BusinessID, Name, Business.ProviderID, EIN, GimbalID
+            FROM Business
+            INNER JOIN Provider ON Provider.ProviderID = Business.ProviderID
+            WHERE Provider.ProviderID = (SELECT user_id FROM UserCache WHERE session_token = ?)";
+      $tableName = "Business";
+      echo dbGetRecords($tableName, $sql, [$SessionToken]);
+   }
+      
    function addUserCache() {
         $app = \Slim\Slim::getInstance();
         $request = $app->request();

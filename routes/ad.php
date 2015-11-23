@@ -23,17 +23,6 @@
 	   }
 
 
-
-
-	function clearReceivedAd($ReceivedAdID) {	//check this
-
-		$sql = "UPDATE ReceivedAd
-			SET IsCleared = 1
-			WHERE ReceivedAdID = ?";
-
-		   $tableName = "Ad";
-		   dbUpdateRecords($tableName, $sql, [$ReceivedAdID]);
-	   }
 	   
 	function getAdInformation($AdID) {
 		   $sql = "SELECT Title, Writing
@@ -60,13 +49,6 @@
 		   dbAddRecords($sql, [$BusinessID]);	
 	   }	
    
-
-	function insertReceivedAd($AdID,$ConsumerID,$BusinessID) { //check this
-		   $sql = "INSERT INTO ReceivedAd (AdID, ConsumerID, BusinessID)
-				   VALUES (?, ?, ?)";
-		   $tableName = "ReceivedAd";
-		   dbGetRecords($tableName, $sql, [$AdID,$ConsumerID,$BusinessID]);
-	   }	
 	   
    function addAd() {
    $app = \Slim\Slim::getInstance();
@@ -88,4 +70,3 @@
                               $ad->BusinessID ],
                               $ad   );
    }
-   /*    .*/
