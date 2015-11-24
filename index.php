@@ -88,6 +88,8 @@
            // Received Ad group
            $app->group('/received/ad', function() use($app) {
                $app->get('/:ReceivedAdID/favorite', 'favoriteReceivedAd');
+               $app->get('/:ReceivedAdID/save', 'saveReceivedAd');
+               $app->get('/:ReceivedAdID/block', 'blockReceivedAd'); 
                $app->get('/:ReceivedAdID/clear', 'clearReceivedAd');
                $app->get('/:ReceivedAdID/see', 'seeReceivedAd');
 		       $app->get('/:AdID/:ConsumerID/getReceivedAd', 'getReceivedAd');
