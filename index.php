@@ -9,6 +9,7 @@
     require 'routes/consumer.php';
     require 'routes/ad.php';
     require 'routes/receivedad.php';
+    require 'routes/preferences.php';
 
 	$app = new \Slim\Slim();
 
@@ -87,15 +88,19 @@
 
            // Received Ad group
            $app->group('/received/ad', function() use($app) {
-               $app->get('/:ReceivedAdID/favorite', 'favoriteReceivedAd');
                $app->get('/:ReceivedAdID/save', 'saveReceivedAd');
-               $app->get('/:ReceivedAdID/block', 'blockReceivedAd'); 
                $app->get('/:ReceivedAdID/clear', 'clearReceivedAd');
                $app->get('/:ReceivedAdID/see', 'seeReceivedAd');
 		       $app->get('/:AdID/:ConsumerID/getReceivedAd', 'getReceivedAd');
 		       $app->get('/:ConsumerID/unseen', 'getUnseenReceivedAds');
 
                $app->post('/', 'addReceivedAd');
+           });
+
+           // Preferences group
+           $app->group('/preferences', function() use($app) {
+               $app->get('/consumer/:ConsumerID/business/:BusinessID/favorite', 'favoriteBusiness');
+               $app->get('/consumer/:ConsumerID/business/:BusinessID/block', 'blockBusiness');
            });
         });
         
