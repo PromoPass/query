@@ -69,6 +69,8 @@
                $app->get('/:GimbalID/getBusinessID', 'getBusinessID');
                
                $app->post('/', 'addBusiness');
+               
+               $app->put('/:BusinessID', 'editBusiness');
            });
             
            // Gimbal group
@@ -173,6 +175,18 @@
            $query->execute();
        }
        $results = $query->fetchAll(PDO::FETCH_OBJ);
+       return '{ "' . $tableName . '": ' . json_encode($results, JSON_PRETTY_PRINT) . ' }';
+   }
+
+    function dbGetRecordsArr($tableName, $sql, $a_bind_params = []) {
+       global $db;
+       $query = $db->prepare($sql);
+       if(!empty($a_bind_params)) {
+           $query->execute($a_bind_params);
+       } else {
+           $query->execute();
+       }
+       $results = $query->fetchAll(PDO::FETCH_COLUMN);
        return '{ "' . $tableName . '": ' . json_encode($results, JSON_PRETTY_PRINT) . ' }';
    }
 
