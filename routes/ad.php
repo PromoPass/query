@@ -25,7 +25,7 @@
 
 	   
 	function getAdInformation($AdID) {
-		   $sql = "SELECT Title, Writing
+		   $sql = "SELECT Title, Writing, PicURL
 				   FROM Ad
 				   WHERE AdID = ?";
 		   $tableName = "Ad";
@@ -60,14 +60,15 @@
             SET IsCurrent = 0
             WHERE BusinessID = ?;";
    // finally do the insert
-    $sql .=      "INSERT INTO Ad (TemplateID, IsCurrent, Title, Writing, BusinessID, CreateDate)
-           VALUES (?, ?, ?, ?, ?, NOW())";
+    $sql .=      "INSERT INTO Ad (TemplateID, IsCurrent, Title, Writing, BusinessID, PicURL, CreateDate)
+           VALUES (?, ?, ?, ?, ?, ?, NOW())";
     echo dbAddRecords($sql, [ $ad->BusinessID,
                               $ad->TemplateID,
                               1,
                               $ad->Title,
                               $ad->Writing,
-                              $ad->BusinessID ],
+                              $ad->BusinessID,
+                              $ad->PicURL ],
                               $ad   );
    }
 
@@ -76,11 +77,12 @@
       $request = $app->request();
       $ad = json_decode($request->getBody());
       $sql = "UPDATE Ad
-              SET TemplateId = ?, Title = ?, Writing = ? 
+              SET TemplateId = ?, Title = ?, Writing = ?, PicURL = ?
               WHERE AdID = ?";
       echo dbAddRecords($sql, [ $ad->TemplateID,
                                 $ad->Title,
                                 $ad->Writing,
+                                $ad->PicURL,
                                 $AdID ],
                                 $ad    );
   } 
