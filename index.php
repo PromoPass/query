@@ -103,6 +103,7 @@
            $app->group('/preferences', function() use($app) {
                $app->get('/consumer/:ConsumerID/business/:BusinessID/favorite', 'favoriteBusiness');
                $app->get('/consumer/:ConsumerID/business/:BusinessID/block', 'blockBusiness');
+               $app->get('/consumer/:ConsumerID/business/:BusinessID/check/block', 'getBlockPreference');
            });
         });
         

@@ -23,3 +23,15 @@ function blockBusiness($ConsumerID, $BusinessID) {
                                                  $BusinessID
                                                             ]);      
     }
+
+
+
+   function getBlockPreference($ConsumerID, $BusinessID) {
+       $sql = "SELECT IsBlocked
+               FROM Preferences
+		WHERE ConsumerID = ?
+			And BusinessID = ?";
+       $tableName = "BusinessNames";
+       echo dbGetRecords($tableName, $sql, [$ConsumerID, $BusinessID]);
+   }
+

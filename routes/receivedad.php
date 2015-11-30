@@ -46,8 +46,8 @@
 	function getReceivedAd($AdID, $ConsumerID) {       
         $sql = "SELECT ReceivedAdId
             FROM ReceivedAd
-            LEFT OUTER JOIN Preferences p1 on ReceivedAd.BusinessID = p1.BusinessID
-            LEFT OUTER JOIN Preferences p2 on ReceivedAd.ConsumerID = p2.ConsumerID
+            INNER JOIN Preferences p1 on ReceivedAd.BusinessID = p1.BusinessID
+            	AND ReceivedAd.ConsumerID = p1.ConsumerID
             WHERE AdID = ?
             AND ReceivedAd.ConsumerID = ?
             AND (p1.BusinessID IS NULL OR p1.IsBlocked = 0)";
@@ -56,11 +56,11 @@
 	}
 
     function getUnseenReceivedAds($ConsumerID) { // needs to be checked
-        $sql = "SELECT ReceivedAdId
+        $sql = "SELECT ReceivedAdId, ReceivedAd.BusinessID
             FROM ReceivedAd
-            LEFT OUTER JOIN Preferences p1 on ReceivedAd.BusinessID = p1.BusinessID
-            LEFT OUTER JOIN Preferences p2 on ReceivedAd.ConsumerID = p2.ConsumerID
-            AND ReceivedAd.IsSeen = 0
+            INNER JOIN Preferences p1 on ReceivedAd.BusinessID = p1.BusinessID
+            	AND ReceivedAd.ConsumerID = p1.ConsumerID
+            WHERE ReceivedAd.IsSeen = 0
             AND ReceivedAd.ConsumerID = ?
             AND (p1.BusinessID IS NULL OR p1.IsBlocked = 0)";
         $tableName = "ReceivedAd";
