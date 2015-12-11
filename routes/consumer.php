@@ -20,13 +20,13 @@
     	function getReceivedAdsNotClearedOrSaved($ConsumerID) {
 		   $sql = "SELECT ReceivedAdID, AdID, ReceivedAd.BusinessID
 				   FROM ReceivedAd
-				INNER JOIN Preferences on ReceivedAd.BusinessID = Preferences.BusinessID
+				LEFT JOIN Preferences on ReceivedAd.BusinessID = Preferences.BusinessID
 					AND ReceivedAd.ConsumerID = Preferences.ConsumerID
 				   WHERE ReceivedAd.ConsumerID = ?
 				   AND IsCleared = 0
 				   AND IsSaved = 0
-					AND (IsBlocked = null || IsBlocked = 0)
-				ORDER BY IsFavorite desc, ReceivedDate DESC";
+					AND (IsBlocked IS NULL OR IsBlocked = 0)
+                                ORDER BY IsSeen, IF(IsFavorite IS NULL, 0, IsFavorite) DESC, ReceivedDate DESC";
 		   $tableName = "ReceivedAd";
 		   echo dbGetRecords($tableName, $sql, [$ConsumerID]);
 	   }	   

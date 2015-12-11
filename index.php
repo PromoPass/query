@@ -94,6 +94,7 @@
                $app->get('/:ReceivedAdID/clear', 'clearReceivedAd');
                $app->get('/:ReceivedAdID/see', 'seeReceivedAd');
 		       $app->get('/:AdID/:ConsumerID/getReceivedAd', 'getReceivedAd');
+		       $app->get('/:ConsumerID/saved', 'getSavedReceivedAds');
 		       $app->get('/:ConsumerID/unseen', 'getUnseenReceivedAds');
 
                $app->post('/', 'addReceivedAd');
@@ -104,6 +105,10 @@
                $app->get('/consumer/:ConsumerID/business/:BusinessID/favorite', 'favoriteBusiness');
                $app->get('/consumer/:ConsumerID/business/:BusinessID/block', 'blockBusiness');
                $app->get('/consumer/:ConsumerID/business/:BusinessID/check/block', 'getBlockPreference');
+               $app->get('/consumer/:ConsumerID/blocked/businesses', 'getBlockedBusinesses');
+               $app->get('/consumer/:ConsumerID/favorite/businesses', 'getFavoriteBusinesses');
+               $app->get('/:PreferenceID/unblock', 'unblockBusiness');
+               $app->get('/:PreferenceID/unfavorite', 'unfavoriteBusiness');
            });
         });
         

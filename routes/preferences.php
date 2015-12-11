@@ -25,13 +25,52 @@ function blockBusiness($ConsumerID, $BusinessID) {
     }
 
 
-
    function getBlockPreference($ConsumerID, $BusinessID) {
        $sql = "SELECT IsBlocked
                FROM Preferences
 		WHERE ConsumerID = ?
 			And BusinessID = ?";
-       $tableName = "BusinessNames";
+       $tableName = "Preferences";
        echo dbGetRecords($tableName, $sql, [$ConsumerID, $BusinessID]);
    }
+
+	function getBlockedBusinesses($ConsumerID) {
+       		$sql = "SELECT Name, PreferenceID
+               		FROM Preferences
+			INNER JOIN Business ON Preferences.BusinessID = Business.BusinessID
+			WHERE ConsumerID = ?
+				AND IsBlocked = 1
+			ORDER BY Name";
+       		$tableName = "Preferences";
+       		echo dbGetRecords($tableName, $sql, [$ConsumerID]);
+   	}
+
+	function getFavoriteBusinesses($ConsumerID) {
+       		$sql = "SELECT Name, PreferenceID
+               		FROM Preferences
+			INNER JOIN Business ON Preferences.BusinessID = Business.BusinessID
+			WHERE ConsumerID = ?
+				AND IsFavorite = 1
+			ORDER BY Name";
+       		$tableName = "Preferences";
+       		echo dbGetRecords($tableName, $sql, [$ConsumerID]);
+   	}
+
+
+    function unfavoriteBusiness($PreferenceID) {
+        $sql = "UPDATE Preferences
+                SET IsFavorite=0
+                WHERE PreferenceID=?";
+        $tableName = "Preferences";
+        echo dbUpdateRecords($tableName, $sql, [$PreferenceID]);
+    }
+
+
+    function unblockBusiness($PreferenceID) {
+        $sql = "UPDATE Preferences
+                SET IsBlocked=0
+                WHERE PreferenceID=?";
+        $tableName = "Preferences";
+        echo dbUpdateRecords($tableName, $sql, [$PreferenceID]);
+    }
 
